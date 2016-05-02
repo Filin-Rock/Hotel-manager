@@ -51,8 +51,6 @@ public class Administrator extends javax.swing.JFrame {
     private void initComponents() {
 
         entityManager = java.beans.Beans.isDesignTime() ? null : javax.persistence.Persistence.createEntityManagerFactory("hotel_manager_db?zeroDateTimeBehavior=convertToNullPU").createEntityManager();
-        departmentQuery = java.beans.Beans.isDesignTime() ? null : entityManager.createQuery("SELECT d FROM Department d");
-        departmentList = java.beans.Beans.isDesignTime() ? java.util.Collections.emptyList() : departmentQuery.getResultList();
         jMenu2 = new javax.swing.JMenu();
         ch_department = new javax.swing.JComboBox<>();
         ch_name = new javax.swing.JComboBox<>();
@@ -62,7 +60,7 @@ public class Administrator extends javax.swing.JFrame {
         tasks_list = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        add_user = new javax.swing.JMenuItem();
+        addUser = new javax.swing.JMenuItem();
         exit = new javax.swing.JMenuItem();
         view = new javax.swing.JMenu();
         usersList = new javax.swing.JMenuItem();
@@ -105,9 +103,14 @@ public class Administrator extends javax.swing.JFrame {
 
         jMenu1.setText("File");
 
-        add_user.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
-        add_user.setText("Добавить поль.-ля");
-        jMenu1.add(add_user);
+        addUser.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        addUser.setText("Добавить поль.-ля");
+        addUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addUserActionPerformed(evt);
+            }
+        });
+        jMenu1.add(addUser);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         exit.setText("Exit");
@@ -120,7 +123,7 @@ public class Administrator extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        view.setText("View");
+        view.setText("Просмотр");
 
         usersList.setText("Персонал");
         usersList.addActionListener(new java.awt.event.ActionListener() {
@@ -264,8 +267,9 @@ public class Administrator extends javax.swing.JFrame {
 
     // View table department
     private void usersListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersListActionPerformed
-        UsersList vw = new UsersList();
-        vw.setVisible(true);
+        UsersList ul = new UsersList();
+        ul.setLocationRelativeTo(null);
+        ul.setVisible(true);
     }//GEN-LAST:event_usersListActionPerformed
 
     private void ch_nameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ch_nameActionPerformed
@@ -277,11 +281,16 @@ public class Administrator extends javax.swing.JFrame {
     }//GEN-LAST:event_ch_apartmentActionPerformed
 
     private void tasksListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tasksListActionPerformed
-        TasksList tasksList = new TasksList();
-        //tasksList.setResizable(false);
-        tasksList.setLocationRelativeTo(null);
-        tasksList.setVisible(true);
+        TasksList tl = new TasksList();
+        tl.setLocationRelativeTo(null);
+        tl.setVisible(true);
     }//GEN-LAST:event_tasksListActionPerformed
+
+    private void addUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserActionPerformed
+        AddUser au = new AddUser();
+        au.setLocationRelativeTo(null);
+        au.setVisible(true);
+    }//GEN-LAST:event_addUserActionPerformed
     
     /**
      * @param args the command line arguments
@@ -342,11 +351,10 @@ public class Administrator extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ad_submit;
-    private javax.swing.JMenuItem add_user;
+    private javax.swing.JMenuItem addUser;
     private javax.swing.JComboBox<String> ch_apartment;
     private javax.swing.JComboBox<String> ch_department;
     private javax.swing.JComboBox<String> ch_name;
-    private java.util.List<hmdb.Department> departmentList;
     private javax.persistence.Query departmentQuery;
     private javax.persistence.EntityManager entityManager;
     private javax.swing.JMenuItem exit;
