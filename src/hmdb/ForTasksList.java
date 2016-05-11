@@ -5,12 +5,12 @@ package hmdb;
  *
  * @author Rock
  */
-public class ForTascksList {
+public class ForTasksList {
     
     private final int idTs, idComplit;
     private final String idPerson, idApart, tasks, dateIncoming, idWho;
     
-    public ForTascksList(int idTs, String idPerson, String idApart, String tasks,
+    public ForTasksList(int idTs, String idPerson, String idApart, String tasks,
             String dateIncoming, String idWho, int idComplit)
     {
         this.idTs = idTs;

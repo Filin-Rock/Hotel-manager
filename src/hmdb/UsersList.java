@@ -10,33 +10,30 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 /**
- *
  * @author Rock
  */
 public class UsersList extends javax.swing.JFrame {
-
-    Connection conn = MySqlConnect.ConnectDB();
+    MySqlConnect mySqlConnect = new MySqlConnect();
+    Connection conn = mySqlConnect.ConnectDB();
     PreparedStatement pst = null;
     ResultSet rs = null;
-    
     
     /**
      * Creates new form UserList1
      */
     public UsersList() {
-        
         initComponents();
-        
         showUsersListInJTable();
-        
     }
 
-    // Create array list and get data from table department
+    // Create array list and get data from table users
     public ArrayList<ForUsersList> getUsersList() 
     {  
         ArrayList<ForUsersList> createUsersList = new ArrayList<ForUsersList>();
     
-        String query = "SELECT * FROM department";
+        String query = "SELECT ID_d, depName, persons, username, password, "
+                + "role.Name AS Role, avatarPath FROM users "
+                + "JOIN role ON users.idRole = role.id_role ORDER BY ID_d";
     
         try{
             pst = conn.prepareStatement(query);
@@ -45,12 +42,13 @@ public class UsersList extends javax.swing.JFrame {
         ForUsersList forUsersList;
         
         while(rs.next()){
-            forUsersList = new ForUsersList(rs.getInt("ID_d"), rs.getString("dep_name"), rs.getString("persons"));
+            forUsersList = new ForUsersList(rs.getInt("ID_d"), rs.getString("depName"), 
+                    rs.getString("persons"), rs.getString("username"), rs.getString("password"),
+                    rs.getString("Role"), rs.getString("avatarPath"));
             createUsersList.add(forUsersList);          
         }
         
     } catch (Exception e) {e.printStackTrace();}
-    
         return createUsersList;
     }
     
@@ -59,12 +57,17 @@ public class UsersList extends javax.swing.JFrame {
     {
         ArrayList<ForUsersList> list = getUsersList();
         DefaultTableModel model = (DefaultTableModel) jTableDisplayUsers.getModel();
-        Object [] row = new Object[3];
+        Object [] row = new Object[7];
         for(int i = 0; i < list.size(); i++)
         {
             row[0] = list.get(i).getIdD();
             row[1] = list.get(i).getDepartment();
             row[2] = list.get(i).getPerson();
+            row[3] = list.get(i).getUsername();
+            row[4] = list.get(i).getPassword();
+            row[5] = list.get(i).getRole();
+            row[6] = list.get(i).getAvatarPath();
+            
 
             model.addRow(row);
         }
@@ -82,17 +85,14 @@ public class UsersList extends javax.swing.JFrame {
                model.setRowCount(0);
                showUsersListInJTable();
                 
-            JOptionPane.showMessageDialog(null, "Data " + message+ " Succefully");
+            JOptionPane.showMessageDialog(null, "Данные удачно " + message);
             
             } else {
-                JOptionPane.showMessageDialog(null, "Data Not " + message);
+                JOptionPane.showMessageDialog(null, "Данные " + message);
             }
         } catch (Exception ex) {ex.printStackTrace();}
     } 
-    
 
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -102,15 +102,22 @@ public class UsersList extends javax.swing.JFrame {
         personDisplay = new javax.swing.JTextField();
         updateButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        usernameDisplay = new javax.swing.JTextField();
+        passwDisplay = new javax.swing.JTextField();
+        roleDisplay = new javax.swing.JTextField();
+        avatarPathDisplay = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        reloadData = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Пользователи");
 
         jTableDisplayUsers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Depart", "Person"
+                "ИН", "Отдел", "Ф.И.О.", "Логин", "Пароль", "Роль", "Фото"
             }
         ));
         jTableDisplayUsers.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -123,28 +130,47 @@ public class UsersList extends javax.swing.JFrame {
             jTableDisplayUsers.getColumnModel().getColumn(0).setMinWidth(30);
             jTableDisplayUsers.getColumnModel().getColumn(0).setPreferredWidth(30);
             jTableDisplayUsers.getColumnModel().getColumn(0).setMaxWidth(30);
+            jTableDisplayUsers.getColumnModel().getColumn(1).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(1).setPreferredWidth(140);
+            jTableDisplayUsers.getColumnModel().getColumn(1).setMaxWidth(140);
+            jTableDisplayUsers.getColumnModel().getColumn(2).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(2).setPreferredWidth(145);
+            jTableDisplayUsers.getColumnModel().getColumn(2).setMaxWidth(145);
+            jTableDisplayUsers.getColumnModel().getColumn(3).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(3).setPreferredWidth(130);
+            jTableDisplayUsers.getColumnModel().getColumn(3).setMaxWidth(130);
+            jTableDisplayUsers.getColumnModel().getColumn(4).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(4).setPreferredWidth(110);
+            jTableDisplayUsers.getColumnModel().getColumn(4).setMaxWidth(110);
+            jTableDisplayUsers.getColumnModel().getColumn(5).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(5).setPreferredWidth(125);
+            jTableDisplayUsers.getColumnModel().getColumn(5).setMaxWidth(125);
+            jTableDisplayUsers.getColumnModel().getColumn(6).setMinWidth(10);
+            jTableDisplayUsers.getColumnModel().getColumn(6).setPreferredWidth(205);
+            jTableDisplayUsers.getColumnModel().getColumn(6).setMaxWidth(205);
         }
 
-        departDisplay.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                departDisplayActionPerformed(evt);
-            }
-        });
-
-        updateButton.setText("Update");
+        updateButton.setText("Изменить");
         updateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 updateButtonActionPerformed(evt);
             }
         });
 
-        deleteButton.setText("Delete");
+        deleteButton.setText("Удалить");
         deleteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
             }
         });
 
+        jButton1.setText("Добавить");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -152,53 +178,73 @@ public class UsersList extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(idDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(departDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(idDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(departDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(personDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(usernameDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(passwDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(roleDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jButton1))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(avatarPathDisplay))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(31, 31, 31)
                                 .addComponent(updateButton)
-                                .addGap(38, 38, 38)
-                                .addComponent(deleteButton))
-                            .addComponent(personDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                                .addComponent(deleteButton)))))
+
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(departDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(personDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(usernameDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(idDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(passwDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(roleDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(avatarPathDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(idDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(departDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(personDisplay, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(updateButton)
-                    .addComponent(deleteButton))
-                .addGap(0, 33, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+
+                .addContainerGap())
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
+        
+    // Delete data
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
     
         try {      
-            String query = "DELETE FROM department WHERE ID_d = '"+idDisplay.getText()+"'";
-            updateAndDeleteQuery(query, "Deleted");
+            String query = "DELETE FROM users WHERE ID_d = '"+idDisplay.getText()+"'";
+            updateAndDeleteQuery(query, "удалены!");
         
         } catch (Exception exc) {exc.printStackTrace();}
     }//GEN-LAST:event_deleteButtonActionPerformed
-
-    private void departDisplayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_departDisplayActionPerformed
-               
-    }//GEN-LAST:event_departDisplayActionPerformed
-
+    
     
     private void jTableDisplayUsersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableDisplayUsersMouseClicked
         
@@ -208,28 +254,44 @@ public class UsersList extends javax.swing.JFrame {
         idDisplay.setText(model.getValueAt(i,0).toString());
         departDisplay.setText(model.getValueAt(i,1).toString());
         personDisplay.setText(model.getValueAt(i,2).toString());
-
+        usernameDisplay.setText(model.getValueAt(i,3).toString());
+        passwDisplay.setText(model.getValueAt(i,4).toString());
+        roleDisplay.setText(model.getValueAt(i,5).toString());
+        avatarPathDisplay.setText(model.getValueAt(i,6).toString());
     }//GEN-LAST:event_jTableDisplayUsersMouseClicked
 
+     // Update data
     private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
-
+        
+        String a = "Администратор", m = "Менеджер", u ="Пользователь", idRoleForSet = null;
+        
         try {
-            String query = "UPDATE department SET dep_name = '"+departDisplay.getText()+"', "
-                    + "persons = '"+personDisplay.getText()+"' WHERE ID_d = '"+idDisplay.getText()+"'";
-            updateAndDeleteQuery(query, "Updated");
+            if (roleDisplay.getText().equals(a)) {
+                idRoleForSet = "1";
+            } else if (roleDisplay.getText().equals(m)) {
+                idRoleForSet = "2";
+            } else {
+                idRoleForSet = "3";
+            }
+                
+          String query = "UPDATE users SET depName = '"+departDisplay.getText()+"', "
+                  + "persons = '"+personDisplay.getText()+"', username = '"+usernameDisplay.getText()+"', "
+                  + "password = '"+passwDisplay.getText()+"', idRole = '"+idRoleForSet+"', "
+                  + "avatarPath = '"+avatarPathDisplay.getText()+"' WHERE ID_d = '"+idDisplay.getText()+"'";   
+          
+            updateAndDeleteQuery(query, "изменены!");
 
-            } catch (Exception exce) {exce.printStackTrace();}
+        } catch (Exception exce) {exce.printStackTrace();}
     }//GEN-LAST:event_updateButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    // Add users
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        AddUser au = new AddUser();
+        au.setLocationRelativeTo(null);
+        au.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -237,35 +299,32 @@ public class UsersList extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UsersList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UsersList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UsersList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(UsersList.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new UsersList().setVisible(true);
+                UsersList usersList = new UsersList();
+                usersList.setLocationRelativeTo(null);
+                usersList.setVisible(true);
             }
         });
     }
-
+    private javax.swing.JButton reloadData;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField avatarPathDisplay;
     private javax.swing.JButton deleteButton;
     private javax.swing.JTextField departDisplay;
     private javax.swing.JTextField idDisplay;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTableDisplayUsers;
+    private javax.swing.JTextField passwDisplay;
     private javax.swing.JTextField personDisplay;
+    private javax.swing.JTextField roleDisplay;
     private javax.swing.JButton updateButton;
+    private javax.swing.JTextField usernameDisplay;
     // End of variables declaration//GEN-END:variables
 }

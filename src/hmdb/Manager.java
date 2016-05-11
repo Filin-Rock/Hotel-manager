@@ -10,9 +10,10 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
+ *
  * @author Rock
  */
-public class Administrator extends javax.swing.JFrame {
+public class Manager extends javax.swing.JFrame {
     MySqlConnect mySqlConnect = new MySqlConnect();
     Connection conn = mySqlConnect.ConnectDB();
     PreparedStatement pst = null;
@@ -23,7 +24,7 @@ public class Administrator extends javax.swing.JFrame {
     /**
      * Creates new form Administrator
      */
-    public Administrator( ) {
+    public Manager( ) {
         initComponents();
         
         //Add numberOfApart to choose appartment(ch_apartment) button
@@ -35,7 +36,7 @@ public class Administrator extends javax.swing.JFrame {
                 ch_apartment.addItem(rs.getString("numberOfApart"));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -61,7 +62,7 @@ public class Administrator extends javax.swing.JFrame {
         jMenu2.setText("jMenu2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Администратор");
+        setTitle("Mенеджер");
 
         ch_department.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"Консьерж", "Мастер", "Ресторан", "Такси", "Уборка"}));
         ch_department.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -190,7 +191,7 @@ public class Administrator extends javax.swing.JFrame {
                 ch_name.addItem(rs.getString("persons"));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_ch_departmentActionPerformed
 
@@ -211,7 +212,7 @@ public class Administrator extends javax.swing.JFrame {
             pst = conn.prepareStatement(queryToGetID);
             rs = pst.executeQuery(queryToGetID);
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
         int currentPersonID = 0;
         try {
@@ -219,27 +220,25 @@ public class Administrator extends javax.swing.JFrame {
                 currentPersonID = rs.getInt("ID_d");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         // Get number of apartment
         String currentApartment = (String) ch_apartment.getSelectedItem();
         String queryToGetApartName = String.format("SELECT ID_a from apartment WHERE numberOfApart='%s'", currentApartment);
-        
         try {
             pst = conn.prepareStatement(queryToGetApartName);
             rs = pst.executeQuery(queryToGetApartName);
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
         String currentApartID = "";
         try {
             if (rs.next()) {
                 currentApartID = rs.getString("ID_a");
             }
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         // Insert data (currentPersonID, currentApartID, currentTask) to the "tasks" table
@@ -251,7 +250,7 @@ public class Administrator extends javax.swing.JFrame {
             pst = conn.prepareStatement(submitQuery);
             pst.executeUpdate(submitQuery);
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         JOptionPane.showMessageDialog(null, "Задание добавленно");
@@ -259,9 +258,9 @@ public class Administrator extends javax.swing.JFrame {
 
     // View table users
     private void usersListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usersListActionPerformed
-        UsersList ul = new UsersList();
-        ul.setLocationRelativeTo(null);
-        ul.setVisible(true);
+        UsersListForManager ulfm = new UsersListForManager();
+        ulfm.setLocationRelativeTo(null);
+        ulfm.setVisible(true);
     }//GEN-LAST:event_usersListActionPerformed
 
     // View tasks List
@@ -282,13 +281,13 @@ public class Administrator extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Administrator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Manager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Administrator administrator = new Administrator();
+                Manager administrator = new Manager();
                 administrator.setResizable(false);
                 administrator.setLocationRelativeTo(null);
                 administrator.setVisible(true);
@@ -303,7 +302,7 @@ public class Administrator extends javax.swing.JFrame {
             pst = conn.prepareStatement(query);
             rs = pst.executeQuery(query);
         } catch (SQLException ex) {
-            Logger.getLogger(Administrator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Manager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return rs;
     }
